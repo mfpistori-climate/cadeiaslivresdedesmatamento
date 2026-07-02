@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico — Master Class GT Cadeias Livres de Desmatamento</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F4F6F3; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+  .card { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); max-width: 620px; width: 100%; padding: 2rem; }
+
+  .logo-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid #E8F5E9; }
+  .logo-dot { width: 32px; height: 32px; border-radius: 8px; background: #2D7A3A; display: flex; align-items: center; justify-content: center; }
+  .logo-dot i { color: #fff; font-size: 16px; }
+  .logo-text { font-size: 13px; color: #555; line-height: 1.4; }
+  .logo-text strong { color: #1B5E20; display: block; font-size: 14px; }
+
+  .quiz-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .quiz-sub { font-size: 13px; color: #777; margin-bottom: 1.5rem; }
+
+  .progress-bar-bg { background: #E8F5E9; border-radius: 99px; height: 5px; margin-bottom: 6px; }
+  .progress-bar-fill { height: 5px; border-radius: 99px; background: #2D7A3A; transition: width 0.35s ease; }
+  .progress-label { font-size: 12px; color: #999; margin-bottom: 1.5rem; }
+
+  .slide { display: none; }
+  .slide.active { display: block; }
+
+  .section-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; margin-bottom: 0.75rem; background: #E8F5E9; color: #1B5E20; }
+  .question-text { font-size: 16px; font-weight: 500; color: #1a1a1a; line-height: 1.55; margin-bottom: 1.25rem; }
+
+  .options-grid { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; background: #fafafa; cursor: pointer; transition: border-color 0.15s, background 0.15s; text-align: left; width: 100%; font-family: inherit; }
+  .opt:hover { border-color: #2D7A3A; background: #F1F8F2; }
+  .opt.selected { border-color: #2D7A3A; background: #E8F5E9; }
+  .opt-dot { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; margin-top: 2px; border: 1.5px solid #ccc; background: #fff; transition: background 0.15s, border-color 0.15s; display: flex; align-items: center; justify-content: center; }
+  .opt.selected .opt-dot { background: #2D7A3A; border-color: #2D7A3A; }
+  .opt.selected .opt-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #fff; display: block; }
+  .opt-text { font-size: 14px; color: #1a1a1a; line-height: 1.5; }
+
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+  .nav-btn { padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1.5px solid #ccc; background: #fff; color: #1a1a1a; transition: background 0.15s; font-family: inherit; }
+  .nav-btn:hover { background: #f5f5f5; }
+  .nav-btn.primary { background: #2D7A3A; color: #fff; border-color: #2D7A3A; }
+  .nav-btn.primary:hover { background: #1B5E20; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .result-wrap { display: none; }
+  .result-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .result-sub { font-size: 13px; color: #666; margin-bottom: 1.5rem; line-height: 1.6; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .summary-card { background: #F4F6F3; border-radius: 10px; padding: 14px 16px; }
+  .summary-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .summary-value { font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .summary-note { font-size: 11px; color: #888; margin-top: 3px; }
+
+  .dim-card { border: 1.5px solid #e8e8e8; border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; background: #fafafa; }
+  .dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .dim-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+  .dim-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .dim-bar-bg { background: #eee; border-radius: 99px; height: 6px; }
+  .dim-bar-fill { height: 6px; border-radius: 99px; transition: width 0.6s ease; }
+
+  .insight-box { border-radius: 10px; padding: 14px 16px; margin-top: 1.25rem; background: #E8F5E9; border: 1px solid #A5D6A7; }
+  .insight-title { font-size: 13px; font-weight: 600; color: #1B5E20; margin-bottom: 6px; }
+  .insight-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+  .restart-btn { margin-top: 1.25rem; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1.5px solid #ccc; background: #fff; color: #1a1a1a; font-family: inherit; }
+  .restart-btn:hover { background: #f5f5f5; }
+
+  @media (max-width: 480px) { .card { padding: 1.25rem; } .summary-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo-bar">
+    <div class="logo-dot"><i class="ti ti-leaf"></i></div>
+    <div class="logo-text"><strong>Movimento Impacto Biomas</strong>GT Cadeias de Valor Livres de Desmatamento</div>
+  </div>
+
+  <div id="quiz-ui">
+    <div class="quiz-title">Diagnóstico rápido</div>
+    <div class="quiz-sub">5 perguntas · respostas anônimas · dados para o GT</div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog" style="width:0%"></div></div>
+    <div class="progress-label" id="prog-label">Pergunta 1 de 5</div>
+    <div id="slides"></div>
+    <div class="nav">
+      <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" disabled>← Anterior</button>
+      <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">Próxima →</button>
+    </div>
+  </div>
+
+  <div id="result-ui" class="result-wrap"></div>
+</div>
+
+<script>
+const questions = [
+  { section: "Exposição ao tema", icon: "ti-map", q: "Como você descreveria o engajamento da sua organização com o tema de desmatamento nas cadeias de valor?", opts: ["Já temos políticas e processos ativos de antidesmatamento","O tema está na agenda, mas ainda em fase de planejamento","Reconhecemos a relevância, mas ainda não iniciamos ações concretas","Ainda não é uma prioridade para nossa organização"] },
+  { section: "Rastreabilidade", icon: "ti-git-branch", q: "Qual é o nível de rastreabilidade da origem dos produtos ou insumos da sua cadeia de valor?", opts: ["Rastreamos até o produtor/propriedade de origem","Rastreamos até o fornecedor direto (1º nível)","Temos rastreabilidade parcial, com gaps relevantes","Não temos rastreabilidade estruturada"] },
+  { section: "Ferramentas de monitoramento", icon: "ti-chart-dots", q: "Sua organização utiliza alguma ferramenta para monitorar riscos de desmatamento na cadeia?", opts: ["Sim, utilizamos plataformas específicas (ex: GFW, Trase, Agrobrasil)","Usamos dados de certificações como proxy de risco","Usamos informações pontuais de fornecedores, sem plataforma","Ainda não utilizamos ferramentas de monitoramento"] },
+  { section: "Desafios práticos", icon: "ti-alert-triangle", q: "Qual é o maior desafio que sua organização enfrenta para avançar em cadeias livres de desmatamento?", opts: ["Obter dados confiáveis e atualizados dos fornecedores","Custo e complexidade de implementação dos processos","Engajamento e capacidade técnica dos fornecedores","Falta de clareza sobre quais requisitos regulatórios se aplicam"] },
+  { section: "Expectativas do encontro", icon: "ti-bulb", q: "O que você espera levar desta master class para a sua organização?", opts: ["Conhecer ferramentas concretas que posso começar a usar","Entender melhor os requisitos regulatórios (EUDR e outros)","Conectar com pares e trocar experiências práticas","Ter um panorama geral para apresentar internamente"] }
+];
+
+const answers = new Array(questions.length).fill(null);
+let current = 0;
+
+function buildSlides() {
+  const c = document.getElementById('slides');
+  questions.forEach((q, i) => {
+    const d = document.createElement('div');
+    d.className = 'slide' + (i===0?' active':'');
+    d.id = 'slide-'+i;
+    d.innerHTML = `<div class="section-badge"><i class="ti ${q.icon}" style="font-size:13px"></i>${q.section}</div><div class="question-text">${q.q}</div><div class="options-grid">${q.opts.map((o,oi)=>`<button class="opt${answers[i]===oi?' selected':''}" onclick="sel(${i},${oi})"><span class="opt-dot"></span><span class="opt-text">${o}</span></button>`).join('')}</div>`;
+    c.appendChild(d);
+  });
+}
+
+function sel(qi, oi) {
+  answers[qi] = oi;
+  document.querySelectorAll('#slide-'+qi+' .opt').forEach((b,i)=>b.classList.toggle('selected',i===oi));
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next > questions.length) return;
+  if (next === questions.length) { showResult(); return; }
+  document.getElementById('slide-'+current).classList.remove('active');
+  current = next;
+  document.getElementById('slide-'+current).classList.add('active');
+  updateProgress();
+}
+
+function updateProgress() {
+  document.getElementById('prog').style.width = Math.round(current/questions.length*100)+'%';
+  document.getElementById('prog-label').textContent = `Pergunta ${current+1} de ${questions.length}`;
+  document.getElementById('btn-prev').disabled = current===0;
+  document.getElementById('btn-next').textContent = current===questions.length-1?'Ver resultado →':'Próxima →';
+}
+
+function colorFor(v) {
+  if (v>=0.65) return {bar:'#2D7A3A',tag:'#E8F5E9',tagText:'#1B5E20',label:'Avançado'};
+  if (v>=0.35) return {bar:'#F59E0B',tag:'#FFF8E1',tagText:'#92400E',label:'Em desenvolvimento'};
+  return {bar:'#DC2626',tag:'#FFEBEE',tagText:'#991B1B',label:'Inicial'};
+}
+
+function showResult() {
+  document.getElementById('quiz-ui').style.display='none';
+  const res = document.getElementById('result-ui');
+  res.style.display='block';
+  const avg = answers.reduce((a,v)=>a+(v===null?0:(3-v)/3),0)/questions.length;
+  const gargaloLabels=["Dados dos fornecedores","Custo e complexidade","Capacidade dos fornecedores","Clareza regulatória"];
+  const expectLabels=["Ferramentas práticas","Requisitos regulatórios","Troca com pares","Panorama geral"];
+  const gargalo = answers[3]!==null?gargaloLabels[answers[3]]:"Não respondido";
+  const expect = answers[4]!==null?expectLabels[answers[4]]:"Não respondido";
+  const dims = [{name:"Engajamento com o tema",score:answers[0]===null?0:(3-answers[0])/3},{name:"Rastreabilidade da cadeia",score:answers[1]===null?0:(3-answers[1])/3},{name:"Uso de ferramentas",score:answers[2]===null?0:(3-answers[2])/3}];
+  const ov = colorFor(avg);
+  res.innerHTML = `<div class="result-title">Seu diagnóstico</div><div class="result-sub">Respostas registradas. Os dados serão agregados pelo GT para análise coletiva.</div><div class="summary-grid"><div class="summary-card"><div class="summary-label">Maturidade geral</div><div class="summary-value" style="color:${ov.bar}">${ov.label}</div><div class="summary-note">engajamento, rastreabilidade e ferramentas</div></div><div class="summary-card"><div class="summary-label">Principal gargalo</div><div class="summary-value" style="font-size:15px;margin-top:4px">${gargalo}</div></div><div class="summary-card" style="grid-column:1/-1"><div class="summary-label">Expectativa desta master class</div><div class="summary-value" style="font-size:15px;margin-top:4px">${expect}</div></div></div>${dims.map(d=>{const c=colorFor(d.score);return`<div class="dim-card"><div class="dim-header"><div class="dim-name">${d.name}</div><div class="dim-tag" style="background:${c.tag};color:${c.tagText}">${c.label}</div></div><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${Math.round(d.score*100)}%;background:${c.bar}"></div></div></div>`;}).join('')}<div class="insight-box"><div class="insight-title">O que esses dados nos ajudam a entender</div><div class="insight-text">O GT usará as respostas agregadas de todos os participantes para identificar os temas que mais precisam de aprofundamento ao longo do ano — incluindo a definição das ferramentas e metodologias a serem priorizadas na construção do checklist EUDR.</div></div><button class="restart-btn" onclick="restart()">Refazer</button>`;
+}
+
+function restart() {
+  answers.fill(null); current=0;
+  document.getElementById('result-ui').style.display='none';
+  document.getElementById('quiz-ui').style.display='block';
+  document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===0));
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  updateProgress();
+}
+
+buildSlides(); updateProgress();
+</script>
+</body>
+</html>

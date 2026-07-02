@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico EUDR — GT Cadeias Livres de Desmatamento</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F4F6F3; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+  .card { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); max-width: 620px; width: 100%; padding: 2rem; }
+
+  .logo-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid #E8F5E9; }
+  .logo-dot { width: 32px; height: 32px; border-radius: 8px; background: #2D7A3A; display: flex; align-items: center; justify-content: center; }
+  .logo-dot i { color: #fff; font-size: 16px; }
+  .logo-text { font-size: 13px; color: #555; line-height: 1.4; }
+  .logo-text strong { color: #1B5E20; display: block; font-size: 14px; }
+
+  .quiz-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .quiz-sub { font-size: 13px; color: #777; margin-bottom: 1.5rem; }
+
+  .progress-bar-bg { background: #E8F5E9; border-radius: 99px; height: 5px; margin-bottom: 6px; }
+  .progress-bar-fill { height: 5px; border-radius: 99px; background: #2D7A3A; transition: width 0.35s ease; }
+  .progress-label { font-size: 12px; color: #999; margin-bottom: 1.5rem; }
+
+  .slide { display: none; }
+  .slide.active { display: block; }
+
+  .section-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; margin-bottom: 0.75rem; background: #E8F5E9; color: #1B5E20; }
+  .question-text { font-size: 16px; font-weight: 500; color: #1a1a1a; line-height: 1.55; margin-bottom: 1.25rem; }
+
+  .options-grid { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; background: #fafafa; cursor: pointer; transition: border-color 0.15s, background 0.15s; text-align: left; width: 100%; font-family: inherit; }
+  .opt:hover { border-color: #2D7A3A; background: #F1F8F2; }
+  .opt.selected { border-color: #2D7A3A; background: #E8F5E9; }
+  .opt-letter { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; margin-top: 1px; border: 1.5px solid #ccc; background: #fff; font-size: 12px; font-weight: 600; color: #666; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s, color 0.15s; }
+  .opt.selected .opt-letter { background: #2D7A3A; border-color: #2D7A3A; color: #fff; }
+  .opt-text { font-size: 14px; color: #1a1a1a; line-height: 1.5; }
+
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+  .nav-btn { padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1.5px solid #ccc; background: #fff; color: #1a1a1a; transition: background 0.15s; font-family: inherit; }
+  .nav-btn:hover { background: #f5f5f5; }
+  .nav-btn.primary { background: #2D7A3A; color: #fff; border-color: #2D7A3A; }
+  .nav-btn.primary:hover { background: #1B5E20; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .result-wrap { display: none; }
+  .result-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .result-sub { font-size: 13px; color: #666; margin-bottom: 1.5rem; line-height: 1.6; }
+
+  .dim-card { border: 1.5px solid #e8e8e8; border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; background: #fafafa; }
+  .dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .dim-name { font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 6px; }
+  .dim-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .dim-bar-bg { background: #eee; border-radius: 99px; height: 6px; }
+  .dim-bar-fill { height: 6px; border-radius: 99px; transition: width 0.6s ease; }
+
+  .alert-box { border-radius: 10px; padding: 14px 16px; margin-top: 1.5rem; }
+  .alert-box.red { background: #FFEBEE; border: 1px solid #FFCDD2; }
+  .alert-box.amber { background: #FFF8E1; border: 1px solid #FFE082; }
+  .alert-box.green { background: #E8F5E9; border: 1px solid #A5D6A7; }
+  .alert-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .alert-box.red .alert-title { color: #B71C1C; }
+  .alert-box.amber .alert-title { color: #F57F17; }
+  .alert-box.green .alert-title { color: #1B5E20; }
+  .alert-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+  .restart-btn { margin-top: 1.25rem; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1.5px solid #ccc; background: #fff; color: #1a1a1a; font-family: inherit; }
+  .restart-btn:hover { background: #f5f5f5; }
+
+  @media (max-width: 480px) { .card { padding: 1.25rem; } }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo-bar">
+    <div class="logo-dot"><i class="ti ti-leaf"></i></div>
+    <div class="logo-text"><strong>Movimento Impacto Biomas</strong>GT Cadeias de Valor Livres de Desmatamento</div>
+  </div>
+
+  <div id="quiz-ui">
+    <div class="quiz-title">Diagnóstico EUDR</div>
+    <div class="quiz-sub">12 perguntas · respostas anônimas · gargalos na adequação à EUDR</div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog" style="width:0%"></div></div>
+    <div class="progress-label" id="prog-label">Pergunta 1 de 12</div>
+    <div id="slides"></div>
+    <div class="nav">
+      <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" disabled>← Anterior</button>
+      <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">Próxima →</button>
+    </div>
+  </div>
+
+  <div id="result-ui" class="result-wrap"></div>
+</div>
+
+<script>
+const sections = [
+  { section: "Conhecimento regulatório", icon: "ti-file-description", items: [
+    { q: "Como você avalia o nível de conhecimento da sua equipe sobre os requisitos específicos da EUDR?", opts: ["Conhecemos bem e já mapeamos os requisitos aplicáveis ao nosso negócio","Temos conhecimento parcial, mas há lacunas no entendimento dos detalhes","Conhecemos superficialmente, ainda precisamos aprofundar","Ainda não estudamos a regulamentação de forma estruturada"] },
+    { q: "Sua empresa já identificou quais produtos e commodities da sua cadeia estão sujeitos à EUDR?", opts: ["Sim, mapeamos todos os produtos e fluxos relevantes","Parcialmente — cobrimos os produtos principais, mas há gaps","Ainda estamos nesse processo de identificação","Ainda não iniciamos esse mapeamento"] },
+    { q: "Como sua organização acompanha as atualizações e prazos regulatórios da EUDR?", opts: ["Temos um processo formal de monitoramento regulatório","Acompanhamos de forma ad hoc, sem processo estruturado","Dependemos de informações de parceiros ou clientes externos","Não temos acompanhamento sistemático"] }
+  ]},
+  { section: "Rastreabilidade e cadeia", icon: "ti-git-branch", items: [
+    { q: "Até que nível da sua cadeia de fornecimento você consegue rastrear a origem dos seus produtos?", opts: ["Fornecedores diretos e indiretos (1º e 2º nível ou mais)","Apenas fornecedores diretos (1º nível)","Rastreamento parcial, com gaps significativos","Não temos rastreabilidade estruturada da cadeia"] },
+    { q: "Sua empresa coleta geolocalização (coordenadas ou polígonos) das áreas de produção de seus fornecedores?", opts: ["Sim, de forma sistematizada para a maioria dos fornecedores","Sim, mas apenas para alguns fornecedores prioritários","Estamos em processo de coleta","Ainda não coletamos essa informação"] },
+    { q: "Qual é o principal gargalo na rastreabilidade da sua cadeia?", opts: ["Resistência ou incapacidade dos fornecedores em fornecer dados","Falta de sistema ou plataforma tecnológica adequada","Complexidade e volume da cadeia (muitos fornecedores)","Ausência de processo ou política interna estruturada"] }
+  ]},
+  { section: "Monitoramento e ferramentas", icon: "ti-chart-dots", items: [
+    { q: "Quais ferramentas de monitoramento de risco de desmatamento sua empresa já utiliza?", opts: ["Utilizamos múltiplas plataformas (ex: GFW, Trase, Agrobrasil)","Utilizamos uma plataforma de forma regular","Usamos esporadicamente, sem processo definido","Ainda não utilizamos ferramentas de monitoramento"] },
+    { q: "Sua empresa realiza avaliações periódicas de risco de desmatamento nos fornecedores?", opts: ["Sim, com metodologia estruturada e periodicidade definida","Sim, mas de forma pontual e sem padronização","Estamos desenvolvendo essa capacidade","Ainda não realizamos esse tipo de avaliação"] }
+  ]},
+  { section: "Due diligence e operação", icon: "ti-shield-check", items: [
+    { q: "Sua empresa possui um processo formal de due diligence socioambiental para novos e atuais fornecedores?", opts: ["Sim, aplicado sistematicamente a todos os fornecedores relevantes","Sim, mas aplicado apenas a fornecedores de alto risco","Em desenvolvimento — ainda não está operacional","Não temos processo formal de due diligence"] },
+    { q: "Como você avalia a capacidade dos seus fornecedores de atender às exigências de evidência da EUDR?", opts: ["A maioria tem capacidade e já está se adequando","Parte tem capacidade, mas há fornecedores vulneráveis","Poucos têm capacidade — há grande risco de perda de fornecedores","Não temos informação suficiente para avaliar"] }
+  ]},
+  { section: "Governança interna", icon: "ti-building", items: [
+    { q: "Existe uma área ou responsável definido internamente para coordenar a adequação à EUDR?", opts: ["Sim, há uma equipe ou responsável dedicado com mandato claro","Há um responsável, mas sem dedicação exclusiva","Está sendo definido, ainda não está formalizado","Ainda não há responsável definido"] },
+    { q: "O tema EUDR já está incorporado à estratégia e ao planejamento da empresa?", opts: ["Sim, está integrado ao planejamento estratégico e há recursos alocados","Parcialmente — está no radar, mas sem recursos formalmente alocados","Está sendo discutido, mas ainda não faz parte do planejamento formal","Ainda não é uma prioridade interna"] }
+  ]}
+];
+
+const flat = [];
+sections.forEach((sec, si) => sec.items.forEach(item => flat.push({ ...item, section: sec.section, icon: sec.icon, si })));
+const answers = new Array(flat.length).fill(null);
+let current = 0;
+
+function buildSlides() {
+  const c = document.getElementById('slides');
+  flat.forEach((q, i) => {
+    const d = document.createElement('div');
+    d.className = 'slide' + (i===0?' active':'');
+    d.id = 'slide-'+i;
+    d.innerHTML = `<div class="section-badge"><i class="ti ${q.icon}" style="font-size:13px"></i>${q.section}</div><div class="question-text">${q.q}</div><div class="options-grid">${q.opts.map((o,oi)=>`<button class="opt${answers[i]===oi?' selected':''}" onclick="sel(${i},${oi})"><span class="opt-letter">${String.fromCharCode(65+oi)}</span><span class="opt-text">${o}</span></button>`).join('')}</div>`;
+    c.appendChild(d);
+  });
+}
+
+function sel(qi, oi) {
+  answers[qi] = oi;
+  document.querySelectorAll('#slide-'+qi+' .opt').forEach((b,i)=>b.classList.toggle('selected',i===oi));
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next > flat.length) return;
+  if (next === flat.length) { showResult(); return; }
+  document.getElementById('slide-'+current).classList.remove('active');
+  current = next;
+  document.getElementById('slide-'+current).classList.add('active');
+  updateProgress();
+}
+
+function updateProgress() {
+  document.getElementById('prog').style.width = Math.round(current/flat.length*100)+'%';
+  document.getElementById('prog-label').textContent = `Pergunta ${current+1} de ${flat.length}`;
+  document.getElementById('btn-prev').disabled = current===0;
+  document.getElementById('btn-next').textContent = current===flat.length-1?'Ver resultado →':'Próxima →';
+}
+
+function colorFor(v) {
+  if (v>=0.65) return {bar:'#2D7A3A',tag:'#E8F5E9',tagText:'#1B5E20',label:'Avançado'};
+  if (v>=0.35) return {bar:'#F59E0B',tag:'#FFF8E1',tagText:'#92400E',label:'Em desenvolvimento'};
+  return {bar:'#DC2626',tag:'#FFEBEE',tagText:'#991B1B',label:'Prioritário'};
+}
+
+function showResult() {
+  document.getElementById('quiz-ui').style.display='none';
+  const res = document.getElementById('result-ui');
+  res.style.display='block';
+
+  const secScores = sections.map((sec, si) => {
+    const items = flat.filter(f=>f.si===si);
+    const avg = items.reduce((a,f)=>{ const idx=flat.indexOf(f); return a+(answers[idx]===null?0:(3-answers[idx])/3); },0)/items.length;
+    return { name: sec.section, icon: sec.icon, score: avg };
+  });
+
+  const overall = secScores.reduce((a,s)=>a+s.score,0)/secScores.length;
+  const ov = colorFor(overall);
+
+  let alertHtml = '';
+  if (overall>=0.65) alertHtml = `<div class="alert-box green"><div class="alert-title">Maturidade avançada</div><div class="alert-text">Sua organização demonstra boa base para a conformidade. Os próximos passos envolvem aprofundar rastreabilidade nos níveis mais profundos da cadeia e formalizar evidências para o due diligence statement exigido pela EUDR.</div></div>`;
+  else if (overall>=0.35) alertHtml = `<div class="alert-box amber"><div class="alert-title">Maturidade em desenvolvimento</div><div class="alert-text">Há avanços importantes, mas lacunas relevantes ainda precisam ser endereçadas antes dos prazos da EUDR. Priorize as dimensões em vermelho no diagnóstico acima.</div></div>`;
+  else alertHtml = `<div class="alert-box red"><div class="alert-title">Atenção: adequação urgente necessária</div><div class="alert-text">Sua organização enfrenta gargalos significativos em múltiplas dimensões. Recomenda-se iniciar imediatamente um plano estruturado de adequação, com prioridade para rastreabilidade e due diligence.</div></div>`;
+
+  res.innerHTML = `<div class="result-title">Diagnóstico EUDR — resultado</div><div class="result-sub">Maturidade geral estimada: <strong style="color:${ov.bar}">${ov.label}</strong></div>${secScores.map(s=>{const c=colorFor(s.score);return`<div class="dim-card"><div class="dim-header"><div class="dim-name"><i class="ti ${s.icon}" style="font-size:14px"></i>${s.name}</div><div class="dim-tag" style="background:${c.tag};color:${c.tagText}">${c.label}</div></div><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${Math.round(s.score*100)}%;background:${c.bar}"></div></div></div>`;}).join('')}${alertHtml}<button class="restart-btn" onclick="restart()">Refazer questionário</button>`;
+}
+
+function restart() {
+  answers.fill(null); current=0;
+  document.getElementById('result-ui').style.display='none';
+  document.getElementById('quiz-ui').style.display='block';
+  document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===0));
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  updateProgress();
+}
+
+buildSlides(); updateProgress();
+</script>
+</body>
+</html>
